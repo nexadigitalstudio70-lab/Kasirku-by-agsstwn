@@ -1,0 +1,6 @@
+{
+  "name": "Kasirku by Agsstwn",
+  "description": "Aplikasi Web Kasir Lengkap - Kasir Cepat, Dapur Sigap, Omzet Naik.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

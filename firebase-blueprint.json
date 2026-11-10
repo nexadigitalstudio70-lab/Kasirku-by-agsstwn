@@ -1,0 +1,274 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile for staff and owners",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "storeName": { "type": "string", "maxLength": 100 },
+        "role": { "type": "string", "enum": ["owner", "manager", "cashier", "waiter", "kitchen"] },
+        "pin": { "type": "string", "maxLength": 10 },
+        "photoUrl": { "type": "string", "maxLength": 500000 },
+        "setupCompleted": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "name", "role"]
+    },
+    "Branch": {
+      "title": "Branch",
+      "description": "Store branch location",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "address": { "type": "string", "maxLength": 300 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "openingHours": { "type": "string", "maxLength": 100 },
+        "photoUrl": { "type": "string", "maxLength": 500000 },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "ownerId", "name"]
+    },
+    "Table": {
+      "title": "Table",
+      "description": "Dine-in table in a branch",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "branchId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 50 },
+        "capacity": { "type": "number" },
+        "status": { "type": "string", "enum": ["empty", "occupied", "bill", "cleaning"] },
+        "currentOrderId": { "type": "string", "maxLength": 100 },
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "branchId", "name", "status"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Menu category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "branchId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "icon": { "type": "string", "maxLength": 50 },
+        "sortOrder": { "type": "number" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name"]
+    },
+    "Menu": {
+      "title": "Menu",
+      "description": "Food or beverage menu item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "branchId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "categoryId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 150 },
+        "price": { "type": "number" },
+        "costPrice": { "type": "number" },
+        "description": { "type": "string", "maxLength": 500 },
+        "photoUrl": { "type": "string", "maxLength": 500000 },
+        "isAvailable": { "type": "boolean" },
+        "categoryType": { "type": "string", "enum": ["food", "beverage", "other"] },
+        "variants": { "type": "array" },
+        "recipe": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "price"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer order or bill",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "branchId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "tableId": { "type": "string" },
+        "tableName": { "type": "string", "maxLength": 100 },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "serviceCharge": { "type": "number" },
+        "tax": { "type": "number" },
+        "discount": { "type": "number" },
+        "voucherCode": { "type": "string", "maxLength": 50 },
+        "total": { "type": "number" },
+        "status": { "type": "string", "enum": ["cooking", "ready", "served", "completed", "cancelled"] },
+        "type": { "type": "string", "enum": ["dine_in", "takeaway", "delivery"] },
+        "cashierId": { "type": "string" },
+        "cashierName": { "type": "string", "maxLength": 100 },
+        "paymentMethod": { "type": "string", "maxLength": 50 },
+        "paymentStatus": { "type": "string", "enum": ["pending", "paid", "refunded"] },
+        "notes": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "items", "total", "status"]
+    },
+    "Inventory": {
+      "title": "Inventory",
+      "description": "Stock of raw ingredients",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "branchId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "unit": { "type": "string", "maxLength": 30 },
+        "currentStock": { "type": "number" },
+        "minStock": { "type": "number" },
+        "photoUrl": { "type": "string", "maxLength": 500000 },
+        "supplier": { "type": "string", "maxLength": 100 },
+        "costPerUnit": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "unit", "currentStock"]
+    },
+    "InventoryTransaction": {
+      "title": "InventoryTransaction",
+      "description": "Log of stock movements",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "branchId": { "type": "string" },
+        "inventoryId": { "type": "string" },
+        "ingredientName": { "type": "string", "maxLength": 100 },
+        "type": { "type": "string", "enum": ["in", "out", "opname", "transfer"] },
+        "amount": { "type": "number" },
+        "previousStock": { "type": "number" },
+        "newStock": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "inventoryId", "type", "amount"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Registered customer or loyalty member",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "branchId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "points": { "type": "number" },
+        "totalSpent": { "type": "number" },
+        "orderCount": { "type": "number" },
+        "birthDate": { "type": "string", "maxLength": 30 },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "phone"]
+    },
+    "Reservation": {
+      "title": "Reservation",
+      "description": "Table reservation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "branchId": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "tableId": { "type": "string" },
+        "tableName": { "type": "string", "maxLength": 100 },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "reservationDate": { "type": "string", "maxLength": 30 },
+        "reservationTime": { "type": "string", "maxLength": 30 },
+        "guestCount": { "type": "number" },
+        "status": { "type": "string", "enum": ["confirmed", "seated", "cancelled"] },
+        "notes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "customerName", "reservationDate", "reservationTime"]
+    },
+    "Setting": {
+      "title": "Setting",
+      "description": "Store configuration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ownerId": { "type": "string" },
+        "storeName": { "type": "string", "maxLength": 100 },
+        "logoUrl": { "type": "string", "maxLength": 500000 },
+        "address": { "type": "string", "maxLength": 300 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "taxRate": { "type": "number" },
+        "serviceChargeRate": { "type": "number" },
+        "receiptFooter": { "type": "string", "maxLength": 300 },
+        "bluetoothPrinterName": { "type": "string", "maxLength": 100 },
+        "cashierPin": { "type": "string", "maxLength": 10 },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles for authenticated staff and owners"
+    },
+    "/branches/{branchId}": {
+      "schema": { "$ref": "#/entities/Branch" },
+      "description": "Branches of the store"
+    },
+    "/tables/{tableId}": {
+      "schema": { "$ref": "#/entities/Table" },
+      "description": "Tables for POS dine-in management"
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Food and drink categories"
+    },
+    "/menus/{menuId}": {
+      "schema": { "$ref": "#/entities/Menu" },
+      "description": "Menu catalogue items"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Orders placed at the cashier or online"
+    },
+    "/inventory/{inventoryId}": {
+      "schema": { "$ref": "#/entities/Inventory" },
+      "description": "Raw material stock items"
+    },
+    "/inventory_transactions/{txId}": {
+      "schema": { "$ref": "#/entities/InventoryTransaction" },
+      "description": "Stock audit log and movements"
+    },
+    "/customers/{customerId}": {
+      "schema": { "$ref": "#/entities/Customer" },
+      "description": "Customer database and loyalty records"
+    },
+    "/reservations/{reservationId}": {
+      "schema": { "$ref": "#/entities/Reservation" },
+      "description": "Table bookings and reservations"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/Setting" },
+      "description": "POS settings and branch configurations"
+    }
+  }
+}

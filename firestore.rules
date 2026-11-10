@@ -1,0 +1,138 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow get: if isSignedIn() && (request.auth.uid == userId || resource.data.uid == request.auth.uid);
+      allow list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(userId) && request.auth.uid == userId
+        && incoming().name is string && incoming().name.size() <= 100
+        && incoming().role is string && incoming().role in ['owner', 'manager', 'cashier', 'waiter', 'kitchen'];
+      allow update: if isSignedIn() && request.auth.uid == userId
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow delete: if false;
+    }
+
+    // Branches collection
+    match /branches/{branchId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(branchId)
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow update: if isSignedIn()
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow delete: if isSignedIn();
+    }
+
+    // Tables collection
+    match /tables/{tableId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(tableId)
+        && incoming().name is string && incoming().name.size() <= 50;
+      allow update: if isSignedIn()
+        && incoming().name is string && incoming().name.size() <= 50;
+      allow delete: if isSignedIn();
+    }
+
+    // Categories collection
+    match /categories/{categoryId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(categoryId)
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow update: if isSignedIn()
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow delete: if isSignedIn();
+    }
+
+    // Menus collection
+    match /menus/{menuId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(menuId)
+        && incoming().name is string && incoming().name.size() <= 150
+        && incoming().price is number && incoming().price >= 0;
+      allow update: if isSignedIn()
+        && incoming().name is string && incoming().name.size() <= 150
+        && incoming().price is number && incoming().price >= 0;
+      allow delete: if isSignedIn();
+    }
+
+    // Orders collection
+    match /orders/{orderId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(orderId)
+        && incoming().total is number && incoming().total >= 0
+        && incoming().status in ['cooking', 'ready', 'served', 'completed', 'cancelled'];
+      allow update: if isSignedIn()
+        && incoming().total is number && incoming().total >= 0;
+      allow delete: if isSignedIn();
+    }
+
+    // Inventory collection
+    match /inventory/{inventoryId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(inventoryId)
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow update: if isSignedIn()
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow delete: if isSignedIn();
+    }
+
+    // Inventory Transactions collection
+    match /inventory_transactions/{txId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(txId)
+        && incoming().amount is number;
+      allow update, delete: if false; // Audit logs are immutable
+    }
+
+    // Customers collection
+    match /customers/{customerId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(customerId)
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow update: if isSignedIn()
+        && incoming().name is string && incoming().name.size() <= 100;
+      allow delete: if isSignedIn();
+    }
+
+    // Reservations collection
+    match /reservations/{reservationId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(reservationId)
+        && incoming().customerName is string && incoming().customerName.size() <= 100;
+      allow update: if isSignedIn()
+        && incoming().customerName is string && incoming().customerName.size() <= 100;
+      allow delete: if isSignedIn();
+    }
+
+    // Settings collection
+    match /settings/{settingId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn() && isValidId(settingId);
+      allow delete: if false;
+    }
+  }
+}
